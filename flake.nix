@@ -1,50 +1,32 @@
 {
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs";
-    flake-utils.url = "github:numtide/flake-utils";
-    crane.url = "github:ipetkov/crane";
+    garnix-lib.url = "github:garnix-io/garnix-lib";
+    Haskell.url = "github:garnix-io/haskell-module";
   };
-  outputs = { nixpkgs, flake-utils, crane, ... }:
-    flake-utils.lib.eachSystem [ "x86_64-linux" ] (system:
-      let
-        lib = nixpkgs.lib;
-        pkgs = import nixpkgs { inherit system; };
-        craneLib = crane.mkLib pkgs;
-        commonArgs =
-          let
-            inner = {
-              src = lib.fileset.toSource {
-                root = ./.;
-                fileset = lib.fileset.unions [
-                  ./Cargo.toml
-                  ./Cargo.lock
-                  ./rust-toolchain
-                  ./src
-                ];
-              };
-              strictDeps = true;
-            };
-          in
-          inner // {
-            cargoArtifacts = craneLib.buildDepsOnly inner;
-          };
-      in
-      rec {
-        packages = {
-          coding = craneLib.buildPackage (commonArgs // {
-            doCheck = false;
-          });
-          default = packages.coding;
+
+  nixConfig = {
+    extra-substituters = [ "https://cache.garnix.io" ];
+    extra-trusted-public-keys = [ "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g=" ];
+  };
+
+  outputs = inputs: inputs.garnix-lib.lib.mkModules {
+    modules = [
+      inputs.Haskell.garnixModules.default
+    ];
+
+    config = { pkgs, ... }: {
+      haskell = {
+        haskell-project = {
+          buildDependencies = [  ];
+          devTools = [ pkgs.haskell-language-server ];
+          ghcVersion = "9.8";
+          runtimeDependencies = [  ];
+          src = ./.;
+          webServer = null;
         };
-        checks = {
-          tests = craneLib.cargoTest commonArgs;
-          clippy = craneLib.cargoClippy (commonArgs // {
-            cargoClippyExtraArgs = "-- -Dwarnings";
-          });
-        };
-        devShells.default = craneLib.devShell {
-          packages = [ pkgs.rust-analyzer ];
-        };
-      }
-    );
+      };
+
+      garnix.deployBranch = "main";
+    };
+  };
 }
