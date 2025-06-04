@@ -4,7 +4,7 @@ use cradle::prelude::*;
 use std::thread::sleep;
 use std::time::Duration;
 
-pub fn setup(vcs_type: crate::VcsType) {
+pub fn setup() {
     // editor terminal
     action(&["set-column-width", "70%"]);
     // browser
@@ -19,17 +19,12 @@ pub fn setup(vcs_type: crate::VcsType) {
     action(&["set-column-width", "40%"]);
     // vcs terminals
     wait_for_change("terminal", || {
-        run(programs::terminal_command(programs::tree(vcs_type)));
+        run(programs::terminal_command(Some(vec![
+            "git-shell".to_string(),
+        ])));
     });
-    action(&["set-column-width", "50%"]);
-    wait_for_change("terminal", || {
-        run(programs::terminal_command(programs::status(vcs_type)));
-    });
-    action(&["consume-or-expel-window-left"]);
-    wait_for_change("terminal", || run(programs::terminal_command(None)));
-    action(&["set-column-width", "50%"]);
+    action(&["set-column-width", "100%"]);
     // go back
-    action(&["focus-column-left"]);
     action(&["focus-column-left"]);
     action(&["focus-column-left"]);
 }
