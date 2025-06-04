@@ -78,7 +78,9 @@ fn main() {
     wait_for_change(&sway_terminal_command(match vcs_type {
         VcsType::None => None,
         VcsType::Git => Some("/usr/bin/watch --color git -c color.ui=always status"),
-        VcsType::Jujutsu => Some("/usr/bin/watch jj status --color always"),
+        VcsType::Jujutsu => {
+            Some("/usr/bin/watch bash -c '\"jj status --color always && jj diff --color always\"'")
+        }
     }));
     swaymsg("focus left");
     swaymsg("focus left");
