@@ -16,7 +16,7 @@ fn main() {
     let _args = Args::from_args();
     match wm_type {
         WmType::Sway => sway::setup(vcs_type),
-        WmType::Niri => niri::setup(vcs_type),
+        WmType::Niri => niri::setup(),
     }
     eprintln!("Done.");
 }
