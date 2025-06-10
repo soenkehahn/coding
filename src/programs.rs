@@ -3,7 +3,7 @@ use cradle::prelude::*;
 
 pub const TERMINAL_COMMAND: &str = "alacritty";
 
-pub fn terminal_command(command: Option<Vec<String>>) -> impl Input {
+pub fn terminal_command(command: Option<Vec<String>>) -> Vec<String> {
     let StdoutTrimmed(pwd) = run_output!("pwd");
     let mut result = vec![
         TERMINAL_COMMAND.to_owned(),

@@ -67,5 +67,5 @@ fn get_active_window() -> String {
 }
 
 fn terminal_command(command: Option<Vec<String>>) -> impl Input {
-    ("exec", programs::terminal_command(command))
+    ("exec", programs::terminal_command(command).join(" "))
 }
