@@ -16,7 +16,7 @@ pub fn setup() {
     action(&["focus-column-right"]);
     // watcher terminal
     wait_for_change("terminal", || run(programs::terminal_command(None)));
-    action(&["set-column-width", "40%"]);
+    action(&["set-column-width", "60%"]);
     // vcs terminals
     wait_for_change("terminal", || {
         run(programs::terminal_command(Some(vec![
