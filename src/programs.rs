@@ -22,10 +22,17 @@ pub fn tree(vcs_type: VcsType) -> Option<Vec<String>> {
         VcsType::None => None,
         VcsType::Git => Some(vec!["git-watch-tree".to_owned()]),
         VcsType::Jujutsu => Some(
-            vec!["/usr/bin/watch", "jj", "log", "--color", "always"]
-                .into_iter()
-                .map(ToString::to_string)
-                .collect(),
+            vec![
+                "/usr/bin/watch",
+                "jj",
+                "log",
+                "--color",
+                "always",
+                "--ignore-working-copy",
+            ]
+            .into_iter()
+            .map(ToString::to_string)
+            .collect(),
         ),
     }
 }
@@ -40,7 +47,7 @@ pub fn status(vcs_type: VcsType) -> Option<Vec<String>> {
                 .collect(),
         ),
         VcsType::Jujutsu => Some(
-            "/usr/bin/watch bash -c '\"jj status --color always && jj diff --color always\"'"
+            "/usr/bin/watch bash -c '\"jj status --color always --ignore-working-copy && jj diff --color always --ignore-working-copy\"'"
                 .split_whitespace()
                 .map(ToString::to_string)
                 .collect(),
