@@ -1,3 +1,4 @@
+use crate::VcsType;
 use crate::programs;
 use crate::utils;
 use cradle::prelude::*;
@@ -15,15 +16,32 @@ pub fn setup(vcs_type: crate::VcsType) {
     swaymsg("layout tabbed");
     swaymsg("focus right");
     // right shell for git
-    wait_for_change("terminal", terminal_command(None));
-    swaymsg("split toggle");
-    swaymsg("layout splith");
-    wait_for_change("vcs tree", terminal_command(programs::tree(vcs_type)));
-    swaymsg("split toggle");
-    swaymsg("layout splitv");
-    wait_for_change("vcs status", terminal_command(programs::status(vcs_type)));
-    swaymsg("focus left");
-    swaymsg("focus left");
+    match vcs_type {
+        VcsType::Jujutsu => {
+            wait_for_change(
+                "jjui",
+                terminal_command(Some(vec![
+                    "zsh".to_owned(),
+                    "-c".to_owned(),
+                    "'jjui ; exec zsh'".to_owned(),
+                ])),
+            );
+            swaymsg("split toggle");
+            swaymsg("layout splitv");
+            swaymsg("focus left");
+        }
+        _ => {
+            wait_for_change("terminal", terminal_command(None));
+            swaymsg("split toggle");
+            swaymsg("layout splith");
+            wait_for_change("vcs tree", terminal_command(programs::tree(vcs_type)));
+            swaymsg("split toggle");
+            swaymsg("layout splitv");
+            wait_for_change("vcs status", terminal_command(programs::status(vcs_type)));
+            swaymsg("focus left");
+            swaymsg("focus left");
+        }
+    }
     // middle tab
     swaymsg("split toggle");
     swaymsg("layout splith");
