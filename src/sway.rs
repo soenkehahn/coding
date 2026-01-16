@@ -15,17 +15,10 @@ pub fn setup(vcs_type: crate::VcsType) {
     swaymsg("split toggle");
     swaymsg("layout tabbed");
     swaymsg("focus right");
-    // right shell for git
+    // right shell for vcs
     match vcs_type {
         VcsType::Jujutsu => {
-            wait_for_change(
-                "jjui",
-                terminal_command(Some(vec![
-                    "zsh".to_owned(),
-                    "-c".to_owned(),
-                    "'jjui ; exec zsh'".to_owned(),
-                ])),
-            );
+            wait_for_change("terminal", terminal_command(None));
             swaymsg("split toggle");
             swaymsg("layout splitv");
             swaymsg("focus left");
